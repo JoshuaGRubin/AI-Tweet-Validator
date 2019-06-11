@@ -47,9 +47,6 @@ def getTweetsByUser(user, outputPath = None, maxTweets = 10, verbose = True):
     tweets = [(x.text, str(x.created_at)) for x in
               tweepy.Cursor(api.user_timeline, id = user).items(maxTweets)]
 
-    
-    # Convert to JSON
-    tweets_json = json.dumps(tweets)
 
     if outputPath:
         outputPath = os.path.join(outputPath, user + '.json')
@@ -57,7 +54,7 @@ def getTweetsByUser(user, outputPath = None, maxTweets = 10, verbose = True):
         outputPath = os.path.join('.', user + '.json')
 
     with open(outputPath, 'w') as file:
-        json.dump(tweets_json, file)
+        json.dump(tweets, file)
 
     # Notify the human
     if verbose:
