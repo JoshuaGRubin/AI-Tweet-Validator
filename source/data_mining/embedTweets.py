@@ -60,4 +60,4 @@ if __name__ == '__main__':
     inputDirectory  = '../../data/preprocessed'
     outputDirectory = '../../data/processed'
     
-    a,b = embedTweets(inputDirectory, outputDirectory)
+    embedTweets(inputDirectory, outputDirectory)
