@@ -23,10 +23,11 @@ def filterTweets(inputDirectory, outputDirectory, filters):
 
     # Look for files beginning with @, i.e. twitter handles
     tweetFiles = [f for f in os.listdir(inputDirectory) if f[0]=='@']
-    
-    outputTweets = []
-    
+        
     for filename in tweetFiles:   
+        
+        outputTweets = []
+
         print('Processing ' + filename + '.', end=' ')
         
         inputPath  = os.path.join(inputDirectory, filename)
@@ -35,6 +36,7 @@ def filterTweets(inputDirectory, outputDirectory, filters):
             inData =  json.loads(file.read())
     
         for tweet in inData:
+               
             filteredTweet = tweet[0]
 
             # Remove text matching each of the filters sequentially.
