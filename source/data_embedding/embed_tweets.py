@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-""" 
-Reads files of [[tweet,date]] Applies Universal Sentence Encoder to to the
-tweet to produce a third column with a 512 component embedding.  Writes a json
-output file containing this three column data.
+""" Encapsulates Universal Sentence Encoder
+
+Provides SentenceEncoder class which keeps model resident to reduce need
+for the slow model initialization, provides convenience funtion to map all
+the tweets from a preprocessed directory to a processed directory, and a shell
+invocation wrapper.
 
 June, 2019
 @author: Joshua Rubin
@@ -19,20 +21,38 @@ import tensorflow_hub as hub
 MODULE_URL = "https://tfhub.dev/google/universal-sentence-encoder/2"
 
 class SentenceEncoder:
+    """ Encapsulates the Universal Sentence Encoder
+    
+    Constructor loads the model and exposes the node 'output' which is set
+    up in such a way so that the slow initialization only happens once.
+    Subsequent inference happends very quickly in subsequent calls to
+    embed_phrases.
+    """
     def __init__(self, url = MODULE_URL):
         self.session = tf.Session()
         self.embed = hub.Module(url)
-        self.session.run([tf.global_variables_initializer(), tf.tables_initializer()])
-        self.messagesPlaceholder = tf.placeholder(dtype=tf.string, shape=[None])
+        self.session.run([tf.global_variables_initializer(),
+                          tf.tables_initializer()])
+        self.messagesPlaceholder = tf.placeholder(dtype=tf.string,
+                                                  shape=[None])
         self.output = self.embed(self.messagesPlaceholder)
     
     def embed_phrases(self, phrase_list):
-        return self.session.run(self.output, feed_dict={self.messagesPlaceholder: phrase_list})
+        """ Takes a array or list of phrases and returns a array of embeddings. """ 
+        return self.session.run(self.output,
+                                feed_dict={self.messagesPlaceholder:
+                                           phrase_list})
     
     def __del__(self):
         self.session.close()
         
 def embed_tweets_from_directories(input_directory_path, output_directory_path): 
+    """ Convenience function to apply Universal Sentance Encoder to all the
+    json files in <input_dirextory_path> and writing them to
+    <output_directory_path>.
+    
+    Only files starting with '@' are processed.
+    """      
     
     # Initialize embedding model.
     print('Initializing embedding model.  May take a few seconds.')
@@ -71,4 +91,4 @@ if __name__ == '__main__':
     input_directory  = '../../data/preprocessed'
     output_directory = '../../data/processed'
     
-    embed_tweets_from_directories(input_directory, output_directory)
+#    embed_tweets_from_directories(input_directory, output_directory)
