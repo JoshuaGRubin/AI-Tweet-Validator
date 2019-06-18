@@ -45,6 +45,33 @@ class SentenceEncoder:
     
     def __del__(self):
         self.session.close()
+
+# Initialize embedding model.
+print('Initializing embedding model.  May take a few seconds.')
+sentence_encoder = SentenceEncoder()
+
+def embed_tweets_from_file(input_file_path, output_file_path):
+    """ Read tweets from json file in <input_file_path>, embed, and output
+    to <output_file_path>.
+    """
+    
+    with open(input_file_path, 'r') as file:
+        in_data =  json.loads(file.read())
+    print(f'Loaded {input_file_path}.')   
+    
+    data = pd.DataFrame(in_data, columns=['tweet','date'])        
+    tweets = data['tweet'].values
+    
+    # produce a matched length vector based o the 'tweet' column of 'data' 
+    message_embeddings = sentence_encoder.embed_phrases(tweets)
+            
+    # add the embeddings to the dataframe  
+    data['embeddings'] = message_embeddings.tolist()
+    
+    print('\t' + str(len(data)), 'tweets processed.')
+        
+    with open(output_file_path, 'w') as file:
+        file.write(data.to_json(orient='values')) 
         
 def embed_tweets_from_directories(input_directory_path, output_directory_path): 
     """ Convenience function to apply Universal Sentance Encoder to all the
@@ -54,36 +81,13 @@ def embed_tweets_from_directories(input_directory_path, output_directory_path):
     Only files starting with '@' are processed.
     """      
     
-    # Initialize embedding model.
-    print('Initializing embedding model.  May take a few seconds.')
-    sentence_encoder = SentenceEncoder()
-    
     # Grab the files from the input directory
     tweet_files = [f for f in os.listdir(input_directory_path) if f[0]=='@']
         
-    for file_name in tweet_files:   
-            
-        print('Loading ' + file_name + '.', end=' ')        
+    for file_name in tweet_files:        
         input_file_path  = os.path.join(input_directory_path, file_name)
-        with open(input_file_path, 'r') as file:
-            in_data =  json.loads(file.read())
-    
-        data = pd.DataFrame(in_data, columns=['tweet','date'])    
-        print('\t' + str(len(data)) + ' tweets loaded.')
-               
-        tweets = data['tweet'].values
-        
-        # produce a matched length vector based o the 'tweet' column of 'data' 
-        message_embeddings = sentence_encoder.embed_phrases(tweets)
-                
-        # add the embeddings to the dataframe  
-        data['embeddings'] = message_embeddings.tolist()
-        
-        print('\t' + str(len(data)), 'tweets processed.')
-            
-        output_path = os.path.join(output_directory_path, file_name)    
-        with open(output_path, 'w') as file:
-            file.write(data.to_json(orient='values')) 
+        output_file_path = os.path.join(output_directory_path, file_name)
+        embed_tweets_from_file(input_file_path, output_file_path)
         
 # If I'm being run as a script... otherwise just provide getTweetsByUser. 
 if __name__ == '__main__':
@@ -91,4 +95,4 @@ if __name__ == '__main__':
     input_directory  = '../../data/preprocessed'
     output_directory = '../../data/processed'
     
-#    embed_tweets_from_directories(input_directory, output_directory)
+    embed_tweets_from_directories(input_directory, output_directory)
