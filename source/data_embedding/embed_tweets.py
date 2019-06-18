@@ -29,6 +29,7 @@ class SentenceEncoder:
     embed_phrases.
     """
     def __init__(self, url = MODULE_URL):
+        print('Initializing embedding model.  May take a few seconds.')
         self.session = tf.Session()
         self.embed = hub.Module(url)
         self.session.run([tf.global_variables_initializer(),
@@ -38,7 +39,8 @@ class SentenceEncoder:
         self.output = self.embed(self.messagesPlaceholder)
     
     def embed_phrases(self, phrase_list):
-        """ Takes a array or list of phrases and returns a array of embeddings. """ 
+        """ Takes a array or list of phrases and returns a array of embeddings.
+        """ 
         return self.session.run(self.output,
                                 feed_dict={self.messagesPlaceholder:
                                            phrase_list})
@@ -46,14 +48,13 @@ class SentenceEncoder:
     def __del__(self):
         self.session.close()
 
-# Initialize embedding model.
-print('Initializing embedding model.  May take a few seconds.')
-sentence_encoder = SentenceEncoder()
-
-def embed_tweets_from_file(input_file_path, output_file_path):
+def embed_tweets_from_file(input_file_path, output_file_path, encoder = None):
     """ Read tweets from json file in <input_file_path>, embed, and output
     to <output_file_path>.
-    """
+    """    
+    # If the encoder isn't passed in.  Otherwise reuse the one given.
+    if not encoder:
+        sentence_encoder = SentenceEncoder()
     
     with open(input_file_path, 'r') as file:
         in_data =  json.loads(file.read())
@@ -81,13 +82,17 @@ def embed_tweets_from_directories(input_directory_path, output_directory_path):
     Only files starting with '@' are processed.
     """      
     
+    # Initialize embedding model; reuse for each file.
+    sentence_encoder = SentenceEncoder()
+    
     # Grab the files from the input directory
     tweet_files = [f for f in os.listdir(input_directory_path) if f[0]=='@']
         
     for file_name in tweet_files:        
         input_file_path  = os.path.join(input_directory_path, file_name)
         output_file_path = os.path.join(output_directory_path, file_name)
-        embed_tweets_from_file(input_file_path, output_file_path)
+        embed_tweets_from_file(input_file_path,
+                               output_file_path, encoder = sentence_encoder)
         
 # If I'm being run as a script... otherwise just provide getTweetsByUser. 
 if __name__ == '__main__':
