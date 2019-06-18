@@ -18,13 +18,16 @@ June, 2019
 import os
 import json
 import tweepy
-import argparse
+
+CONFIG_PATH = "../../config.json" 
 
 # Inspired by https://medium.com/@wilamelima/mining-twitter-for-sentiment
 # -analysis-using-python-a74679b85546
 
-def getTweetsByUser(user, outputPath = None, maxTweets = 10, verbose = True):
-
+# Setup access API
+def connect_to_twitter_OAuth():
+    """ Connect to Twitter API and return tweepy api object. """
+    
     ## Pull in keys from your environment
     CONSUMER_KEY    = os.environ['TWITTER_CONSUMER_KEY']
     CONSUMER_SECRET = os.environ['TWITTER_CONSUMER_SECRET']
@@ -32,14 +35,14 @@ def getTweetsByUser(user, outputPath = None, maxTweets = 10, verbose = True):
     ACCESS_TOKEN  = os.environ['TWITTER_ACCESS_TOKEN']
     ACCESS_SECRET = os.environ['TWITTER_ACCESS_SECRET']
     
-    # Setup access API
-    def connect_to_twitter_OAuth():
-        auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-        auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
-        
-        api = tweepy.API(auth)
-        return api
-     
+    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+    auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
+    api = tweepy.API(auth)
+    return api
+
+def get_tweets_by_user(user, output_path = None, maxTweets = 10):
+    """ Retrives up to  <maxTweets> tweets from Twitter user, <user>."""
+         
     # Create API object
     api = connect_to_twitter_OAuth()
     
@@ -47,61 +50,39 @@ def getTweetsByUser(user, outputPath = None, maxTweets = 10, verbose = True):
     tweets = [(x.text, str(x.created_at)) for x in
               tweepy.Cursor(api.user_timeline, id = user).items(maxTweets)]
 
-
-    if outputPath:
-        outputPath = os.path.join(outputPath, user + '.json')
+    if output_path:
+        output_path = os.path.join(output_path, user + '.json')
     else:
-        outputPath = os.path.join('.', user + '.json')
+        output_path = os.path.join('.', user + '.json')
 
-    with open(outputPath, 'w') as file:
+    with open(output_path, 'w') as file:
         json.dump(tweets, file)
 
     # Notify the human
-    if verbose:
-        print('Retrieved',len(tweets), 'tweets for',
-              user + '. Wrote to', outputPath + '.')
+    print('Retrieved',len(tweets), 'tweets for',
+          user + '. Wrote to', output_path + '.')
 
 # If I'm being run as a script... otherwise just export getTweetsByUser. 
 if __name__ == '__main__':
 
-        ######
-        # Create command line argument parser, populate, and parse
-        parser = argparse.ArgumentParser(description=
-                     "Retrieve the tweets of a Twitter user and write to a json file."
-                     "  TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, "
-                     "TWITTER_ACCESS_TOKEN, and TWITTER_ACCESS_SECRET must be valid "
-                     "environment variables containing Twitter API credentials."
-                     "Requires tweepy in PYTHONPATH. ")
+    with open(CONFIG_PATH, 'r') as file:
+        config =  json.loads(file.read())
+
+    config_file_dir = os.path.dirname(os.path.abspath(CONFIG_PATH))
+
+    output_directory = os.path.join(config_file_dir,
+                                    config['raw_data_path'])  
+
+    twitter_users_to_fetch = config['twitter_users']
+    
+    max_tweets_per_user = config['max_tweets_per_user']
+    
+    if not os.path.isdir(output_directory):
+        print(f"Path doesn't exist; creating {output_directory}.")
+        os.makedirs(output_directory)
         
-        parser.add_argument('TwitterHandle', type=str,
-                            help="The user whose tweets you'd like to retrieve.")
-        
-        parser.add_argument('-p','--outputDirectory', type=str, default = '.',
-                             help="Where to write output json if not PWD.")
-        
-        parser.add_argument('-n','--numMaxTweets', type=str, default = '10',
-                             help="What's the largest number of tweets to retriecve?")
-        
-        parser.add_argument('-v', '--verbose', action="count", default=1,
-                             help="Suppress status messages.")
-        
-        args = parser.parse_args()
-        #####
-        
-        if args.verbose:
-            print('Getting (max: '+args.numMaxTweets+') tweets from '
-                   + args.TwitterHandle+'.')
-        
-        if os.path.isdir(args.outputDirectory):
-            if args.verbose:
-                print('Path '+ args.outputDirectory +' exists.')
-        else:
-            if args.verbose:
-                print("Path doesn't exist; creating"+args.outputDirectory+".")
-            os.makedirs(args.outputDirectory)
-        
-              
-        getTweetsByUser('@StephenAtHome',
-                        maxTweets = int(args.numMaxTweets),
-                        outputPath = args.outputDirectory,
-                        verbose = args.verbose )
+    for user in twitter_users_to_fetch:
+    
+        get_tweets_by_user(user,
+                           maxTweets = max_tweets_per_user,
+                           output_path = output_directory)
