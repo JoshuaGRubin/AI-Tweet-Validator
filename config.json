@@ -1,4 +1,13 @@
 {
+  "max_tweets_per_user" : 1000,
+  "raw_data_path":"data/raw",
+  "preprocessed_data_path":"data/preprocessed",
+  "processed_data_path":"data/processed",
+  "min_tweet_characters" : 1,
+  "regexp_tweet_filters": [
+           "http\\S+",
+           "@\\S+[ \\t]*",
+           "#\\S+[ \\t]*"  ],
   "twitter_users":[
            "@BernieSanders",
            "@elonmusk",
@@ -11,9 +20,5 @@
            "@Slavojiek",
            "@StephenCurry30",
            "@tim_cook",
-           "@YoYo_Ma"         ],
-  "max_tweets_per_user" : 1000,
-  "raw_data_path":"data/raw",
-  "preprocessed_data_path":"data/preprocessed",
-  "processed_data_path":"data/processed"
+           "@YoYo_Ma"         ]
 }
