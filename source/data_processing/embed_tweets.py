@@ -18,7 +18,8 @@ import tensorflow as tf
 import tensorflow_hub as hub
 
 # Retrieve Universal Eentence Sncoder.
-MODULE_URL = "https://tfhub.dev/google/universal-sentence-encoder/2"
+MODULE_URL  = "https://tfhub.dev/google/universal-sentence-encoder/2"
+CONFIG_PATH = "../../config.json" 
 
 class SentenceEncoder:
     """ Encapsulates the Universal Sentence Encoder
@@ -54,7 +55,7 @@ def embed_tweets_from_file(input_file_path, output_file_path, encoder = None):
     """    
     # If the encoder isn't passed in.  Otherwise reuse the one given.
     if not encoder:
-        sentence_encoder = SentenceEncoder()
+        encoder = SentenceEncoder()
     
     with open(input_file_path, 'r') as file:
         in_data =  json.loads(file.read())
@@ -64,13 +65,13 @@ def embed_tweets_from_file(input_file_path, output_file_path, encoder = None):
     tweets = data['tweet'].values
     
     # produce a matched length vector based o the 'tweet' column of 'data' 
-    message_embeddings = sentence_encoder.embed_phrases(tweets)
+    message_embeddings = encoder.embed_phrases(tweets)
             
     # add the embeddings to the dataframe  
     data['embeddings'] = message_embeddings.tolist()
-    
     print('\t' + str(len(data)), 'tweets processed.')
-        
+
+    # write them to destination file.        
     with open(output_file_path, 'w') as file:
         file.write(data.to_json(orient='values')) 
         
@@ -97,7 +98,12 @@ def embed_tweets_from_directories(input_directory_path, output_directory_path):
 # If I'm being run as a script... otherwise just provide getTweetsByUser. 
 if __name__ == '__main__':
     
-    input_directory  = '../../data/preprocessed'
-    output_directory = '../../data/processed'
+    with open(CONFIG_PATH, 'r') as file:
+        config =  json.loads(file.read())
+
+    config_file_dir = os.path.dirname(os.path.abspath(CONFIG_PATH))
+
+    input_directory  = os.path.join(config_file_dir, config['preprocessed_data_path'])
+    output_directory = os.path.join(config_file_dir, config['processed_data_path'])  
     
     embed_tweets_from_directories(input_directory, output_directory)
