@@ -1,0 +1,19 @@
+{
+  "twitter_users":[
+           "@BernieSanders",
+           "@elonmusk",
+           "@ewarren",
+           "@drfeifei",
+           "@HamillHimself",
+           "@Oprah",
+           "@realDonaldTrump",
+           "@scotusginsburg",
+           "@Slavojiek",
+           "@StephenCurry30",
+           "@tim_cook",
+           "@YoYo_Ma"         ],
+  "max_tweets_per_user" : 1000,
+  "raw_data_path":"data/raw",
+  "preprocessed_data_path":"data/preprocessed",
+  "processed_data_path":"data/processed"
+}
