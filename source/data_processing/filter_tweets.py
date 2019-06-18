@@ -19,7 +19,6 @@ def filter_tweets_from_files(input_file_path, output_file_path,
         patters matching the regexps in filters, and if more than
         <min_tweet_characters> are left, writes to the output location.
     """
-    
     output_tweets = []
     print('Processing ' + input_file_path + '.', end=' ')    
    
@@ -56,7 +55,6 @@ def filter_tweets_from_directories(input_directory_path, output_directory_path,
                      applied
     filters:         list of reg. expressions whose matches will be removed
     """
-
     # Look for files beginning with @, i.e. twitter handles
     tweet_files = [f for f in os.listdir(input_directory) if f[0]=='@']
         
@@ -73,19 +71,12 @@ if __name__ == '__main__':
         config =  json.loads(file.read())
 
     config_file_dir = os.path.dirname(os.path.abspath(CONFIG_PATH))
-
     input_directory  = os.path.join(config_file_dir, config['raw_data_path'])
     output_directory = os.path.join(config_file_dir,
                                     config['preprocessed_data_path'])  
-    
-    min_tweet_characters = int(config['min_tweet_characters'])
-    
-    # This is a list of regular expressions to filter out.
-    
-#    filters = [ r'http\S+',     # URLs
-#                r'@\S+[ \t]*',  # '@*' references to other users
-#                r'#\S+[ \t]*' ] # '#*' hashtags.
-    
+
+    # Pull-in filter settings from global configuration.    
+    min_tweet_characters = int(config['min_tweet_characters'])    
     filters = config['regexp_tweet_filters']
     
     filter_tweets_from_directories(input_directory, output_directory,
