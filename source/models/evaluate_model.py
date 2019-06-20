@@ -13,13 +13,22 @@ import numpy as np
 import pandas as pd
 
 from sklearn.metrics import confusion_matrix
-from clustered_cosine_sim_model import ClusterCosSimModel
+
+from clustered_cos_sim_model import ClusterCosSimModel
+
+from sklearn.model_selection import train_test_split
 
 CONFIG_PATH = "../../config.json" 
 
-def load_tweets_from_directory(directory_path, trin_test_split_frac = 0.5):
+def load_tweets_from_directory(directory_path, split_frac = 0.4):
     """ Pull in tweet data by user from <directory_path>, shuffle, split.
-        Returns tuple of dataframes, trining and test.
+        
+    Args:
+    directory_path (str): Location of pre-embedded json user files.
+    split_frac (float): train/test split fraction.
+    
+    Returns:
+    tuple: train and test dataframes
     """
     frames = []
     for file in os.listdir(directory_path):
@@ -32,14 +41,17 @@ def load_tweets_from_directory(directory_path, trin_test_split_frac = 0.5):
         
     allData = pd.concat(frames)
 
-    return np.split(allData.sample(frac=1,random_state=1),
-                    [int(trin_test_split_frac * len(allData))])
+    return train_test_split(allData, test_size = split_frac)
 
 def compute_confusion_matrix(model, test_data):
     """ Takes an initialized model and a DataFrame containing (at-least) an
     embedded column 'embedding' and a boolean column, 'is_fraud' indicating
     whether each embedded tweet is is fraudulent (or not written by the user
     whose corpus was used to initialize the model).
+    
+    Args:
+    model (object): initialized model instace.
+    test_data (pd.dataframe): user identity and embedded tweet columns.
     
     Returns: confusion matrix array.
     """    
@@ -57,17 +69,28 @@ def compute_confusion_matrix(model, test_data):
 def TPR(c): return np.round(c[0,0]/(c[0,0]+c[0,1]),2)
 def FPR(c): return np.round(c[1,0]/(c[1,0]+c[1,1]),2)
 
-# If I'm being run as a script:
-if __name__ == '__main__':
+
+def evaluate_model_performance(config_file_dir=None,
+                               input_directory=None):
+    """ Ingests a directory full of twitter data on various users and
+    calculates metrics on binary classification quality 
     
+    Args:
+    config_file_dir (str): Override for default config file path.
+    input_directory (input_directory): Override for data source directory.
+    """
     with open(CONFIG_PATH, 'r') as file:
         config =  json.loads(file.read())
 
-    config_file_dir = os.path.dirname(os.path.abspath(CONFIG_PATH))
+    # Pull standard config file if not explicitly overridden
+    if not config_file_dir:
+        config_file_dir = os.path.dirname(os.path.abspath(CONFIG_PATH))
 
-    input_directory  = os.path.join(config_file_dir,
-     
-                                    config['processed_data_path'])
+    # Use config-specified input data location unless overridden 
+    if not input_directory:
+        input_directory  = os.path.join(config_file_dir,
+                                        config['processed_data_path'])
+
     train_data, test_data = load_tweets_from_directory(input_directory)  
 
     output_TPR_FPR_by_user = {}
@@ -91,8 +114,8 @@ if __name__ == '__main__':
             # if the tweet was from <user> and true otherwise.
             test_data['is_fraud'] = (test_data['name'] != user)
         
-            train_user_embs = train_data[train_data['name'] == user
-                                                             ]['embedding']
+            train_user_embs = train_data[train_data['name'] 
+                                                       == user]['embedding']
             # Initialize model for this user
             cluster_cos_sim_model = ClusterCosSimModel(embedded_corpus 
                                                           = train_user_embs,
@@ -116,9 +139,14 @@ if __name__ == '__main__':
             print('%8.2f %6.2f %6.2f' % (model_thresh,
                                           TPR(conf_matrix),
                                           FPR(conf_matrix)))
+
     output_TPR_FPR = []
     for model_thresh in thresholds:
         output_TPR_FPR.append((model_thresh,
                                TPR(output_confusion_matrix[model_thresh]),
                                FPR(output_confusion_matrix[model_thresh])))
     
+
+# If I'm being run as a script:
+if __name__ == '__main__':
+    evaluate_model_performance()

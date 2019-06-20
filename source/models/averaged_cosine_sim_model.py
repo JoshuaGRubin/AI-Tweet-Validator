@@ -16,12 +16,14 @@ class AvgCosSimModel(Model):
         similarity with a threshold to produce true for inconsistent/fraudulent
         and false for consistent/authentic.
     """
-    def __init__(self, corpus=None, embedded_corpus=None):
-        """ Requires a pre-embedded corpus passed in through <embedded_corpus>.
+    def __init__(self, embedded_corpus):
+        """Requires a pre-embedded corpus passed in through <embedded_corpus>.
+        
+        Args:
+        
+        embedded_corpus (np.array): Array embedding vectors for user corpus
         """
-        if embedded_corpus is None:
-            raise Exception('Sorry, this model requires an embedded_corpus.')
-            
+           
         mean_of_embeddeded_vecs = (np.asarray([x for x in embedded_corpus])
                                     .mean(axis=0))    
         self.user_avg_embedding = mean_of_embeddeded_vecs/np.sqrt(
