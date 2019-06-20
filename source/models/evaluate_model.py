@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 from sklearn.metrics import confusion_matrix
-from averaged_cosine_sim_model import AvgCosSimModel
+from clustered_cosine_sim_model import ClusterCosSimModel
 
 CONFIG_PATH = "../../config.json" 
 
@@ -32,7 +32,7 @@ def load_tweets_from_directory(directory_path, trin_test_split_frac = 0.5):
         
     allData = pd.concat(frames)
 
-    return np.split(allData.sample(frac=1),
+    return np.split(allData.sample(frac=1,random_state=1),
                     [int(trin_test_split_frac * len(allData))])
 
 def compute_confusion_matrix(model, test_data):
@@ -54,8 +54,8 @@ def compute_confusion_matrix(model, test_data):
                                            labels = [True, False])
 
 # Helpers to compute true and false positive rates form confusion matrix
-def TPR(c): return c[0,0]/(c[0,0]+c[0,1])
-def FPR(c): return c[1,0]/(c[1,0]+c[1,1])
+def TPR(c): return np.round(c[0,0]/(c[0,0]+c[0,1]),2)
+def FPR(c): return np.round(c[1,0]/(c[1,0]+c[1,1]),2)
 
 # If I'm being run as a script:
 if __name__ == '__main__':
@@ -70,12 +70,23 @@ if __name__ == '__main__':
                                     config['processed_data_path'])
     train_data, test_data = load_tweets_from_directory(input_directory)  
 
+    output_TPR_FPR_by_user = {}
+    output_confusion_matrix_by_user = {}
+    output_confusion_matrix = {}
+
+    thresholds = [0.2,0.3,0.4,0.5]
     for user in train_data['name'].unique():
         print(f'Evaluating model for user, {user}.')
         print('%8s %6s %6s' % ('Thresh', 'TPR', 'FPR'))
 
-        for model_thresh in np.arange(0.2,0.55,0.05):
-    
+        output_TPR_FPR_by_user[user] = []
+        output_confusion_matrix_by_user[user] = {}
+
+        for model_thresh in thresholds:
+            
+            if model_thresh not in output_confusion_matrix:
+                output_confusion_matrix[model_thresh] = np.zeros([2,2], dtype=np.int32)
+            
             # Add/update a column in test_data called 'is_fraud' that is false
             # if the tweet was from <user> and true otherwise.
             test_data['is_fraud'] = (test_data['name'] != user)
@@ -83,16 +94,31 @@ if __name__ == '__main__':
             train_user_embs = train_data[train_data['name'] == user
                                                              ]['embedding']
             # Initialize model for this user
-            avg_cos_sim_model = AvgCosSimModel(embedded_corpus 
-                                                          = train_user_embs)
+            cluster_cos_sim_model = ClusterCosSimModel(embedded_corpus 
+                                                          = train_user_embs,
+                                                       init_params={'num_clusters':4})
             # Set model classifiaction threshold.
-            avg_cos_sim_model.set_hyperparameters({'threshold':model_thresh})
+            cluster_cos_sim_model.set_hyperparameters({'threshold':
+                                                                model_thresh})
             
             # Evaluate and tabulate model results for test set.
-            conf_matrix = compute_confusion_matrix(avg_cos_sim_model,
+            conf_matrix = compute_confusion_matrix(cluster_cos_sim_model,
                                                    test_data)
+            
+            output_TPR_FPR_by_user[user].append((model_thresh,
+                                                TPR(conf_matrix),
+                                                FPR(conf_matrix)))
+            
+            output_confusion_matrix_by_user[user][model_thresh] = conf_matrix
+            output_confusion_matrix[model_thresh] += conf_matrix
+            
             # Compute true and false positive rates based on confusion matrix.
             print('%8.2f %6.2f %6.2f' % (model_thresh,
                                           TPR(conf_matrix),
                                           FPR(conf_matrix)))
-      
+    output_TPR_FPR = []
+    for model_thresh in thresholds:
+        output_TPR_FPR.append((model_thresh,
+                               TPR(output_confusion_matrix[model_thresh]),
+                               FPR(output_confusion_matrix[model_thresh])))
+    
