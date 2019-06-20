@@ -11,7 +11,7 @@ import numpy as np
 from sklearn.cluster import KMeans
 from base_model import Model
 
-class ClusterCosSimModel(Model):
+class ClusteredCosSimModel(Model):
     """ Derives a model that characterizes the corpus with a single normalized
         mean vector at initialization.  Inference is performed by cosine
         similarity with a threshold to produce true for inconsistent/fraudulent

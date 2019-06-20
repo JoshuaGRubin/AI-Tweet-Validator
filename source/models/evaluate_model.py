@@ -14,18 +14,21 @@ import pandas as pd
 
 from sklearn.metrics import confusion_matrix
 
-from clustered_cos_sim_model import ClusterCosSimModel
+from clustered_cos_sim_model import ClusteredCosSimModel
 
 from sklearn.model_selection import train_test_split
 
 CONFIG_PATH = "../../config.json" 
 
-def load_tweets_from_directory(directory_path, split_frac = 0.4):
+def load_tweets_from_directory(directory_path, split_frac = 0.4,
+                               random_state = None):
     """ Pull in tweet data by user from <directory_path>, shuffle, split.
         
     Args:
     directory_path (str): Location of pre-embedded json user files.
-    split_frac (float): train/test split fraction.
+    split_frac (float): train/test split fraction. Defaults to 0.4.
+    random_state (None or int): Optionally set the random seed for the shuffle.
+        Defaults to None.
     
     Returns:
     tuple: train and test dataframes
@@ -41,7 +44,8 @@ def load_tweets_from_directory(directory_path, split_frac = 0.4):
         
     allData = pd.concat(frames)
 
-    return train_test_split(allData, test_size = split_frac)
+    return train_test_split(allData, test_size = split_frac,
+                                            random_state = random_state)
 
 def compute_confusion_matrix(model, test_data):
     """ Takes an initialized model and a DataFrame containing (at-least) an
@@ -70,8 +74,8 @@ def TPR(c): return np.round(c[0,0]/(c[0,0]+c[0,1]),2)
 def FPR(c): return np.round(c[1,0]/(c[1,0]+c[1,1]),2)
 
 
-def evaluate_model_performance(config_file_dir=None,
-                               input_directory=None):
+def evaluate_model_performance(num_clusters, thresholds,
+                               config_file_dir=None, input_directory=None):
     """ Ingests a directory full of twitter data on various users and
     calculates metrics on binary classification quality 
     
@@ -91,13 +95,13 @@ def evaluate_model_performance(config_file_dir=None,
         input_directory  = os.path.join(config_file_dir,
                                         config['processed_data_path'])
 
-    train_data, test_data = load_tweets_from_directory(input_directory)  
+    train_data, test_data = load_tweets_from_directory(input_directory,
+                                                       random_state = 1)  
 
     output_TPR_FPR_by_user = {}
     output_confusion_matrix_by_user = {}
     output_confusion_matrix = {}
 
-    thresholds = [0.2,0.3,0.4,0.5]
     for user in train_data['name'].unique():
         print(f'Evaluating model for user, {user}.')
         print('%8s %6s %6s' % ('Thresh', 'TPR', 'FPR'))
@@ -117,7 +121,7 @@ def evaluate_model_performance(config_file_dir=None,
             train_user_embs = train_data[train_data['name'] 
                                                        == user]['embedding']
             # Initialize model for this user
-            cluster_cos_sim_model = ClusterCosSimModel(embedded_corpus 
+            cluster_cos_sim_model = ClusteredCosSimModel(embedded_corpus 
                                                           = train_user_embs,
                                                        init_params={'num_clusters':4})
             # Set model classifiaction threshold.
@@ -149,4 +153,4 @@ def evaluate_model_performance(config_file_dir=None,
 
 # If I'm being run as a script:
 if __name__ == '__main__':
-    evaluate_model_performance()
+    evaluate_model_performance(4, [0.2,0.3,0.4,0.5])
