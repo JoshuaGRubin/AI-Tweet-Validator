@@ -11,12 +11,9 @@ import os
 import json
 import numpy as np
 import pandas as pd
-
-from clustered_cos_sim_model import ClusteredCosSimModel as EmbModel
-
 from tfidf_model import TFIDFModel
-
 from sklearn.model_selection import train_test_split
+from clustered_cos_sim_model import ClusteredCosSimModel as EmbModel
 
 CONFIG_PATH = "../../config.json" 
 
@@ -49,6 +46,10 @@ def load_tweets_from_directory(directory_path, split_frac = 0.4,
 
 # From https://stackoverflow.com/a/47626762/1306026; thanks!
 class NumpyEncoder(json.JSONEncoder):
+    """ Helper for JSON library to encode/decode numpy arrays.
+    
+    See: https://stackoverflow.com/a/47626762/1306026
+    """
     def default(self, obj):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
@@ -61,12 +62,29 @@ def evaluate_model_performance(model, data_column,
                                input_directory=None,
                                output_directory=None,
                                users = None):
-    """ Ingests a directory full of twitter data on various users and
-    calculates metrics on binary classification quality 
-    
+    """ Ingests a model and a directory full of twitter data on various users
+    and writes two fies: one contianing similarity scores for the "own" user's
+    tweets and an "other" file with scores for tweets belonging to other users.
+     
     Args:
+        
+    model (object): An instance of a model model from this package.
+    data_column (str): either 'tweet' or 'embedding' to determine what this
+       function passes to the model; e.g. 'tweet' for TDIDF and 'embedding' for
+       the embedding-based models.
+    file_prefix (str): The prefix to use when saving out files from this run.
+    score_args (dict): Keyword args to be passed into the models
+        similarity_score function - e.g. to specify whether or not to
+        cluster_scale.
     config_file_dir (str): Override for default config file path.
-    input_directory (input_directory): Override for data source directory.
+    input_directory (str): Override for data source directory.
+    output_directory(str): Override for metrics output directory path.
+    users (list of strings): Override input_directory contents to select
+        specific users.
+        
+    Return:
+        
+    (2-tuple of arrays): Own and other similarity score arrays.
     """
     with open(CONFIG_PATH, 'r') as file:
         config =  json.loads(file.read())
@@ -120,7 +138,7 @@ def evaluate_model_performance(model, data_column,
     with open(out_file_path, 'w') as file:
         json.dump(scores_other, file, cls=NumpyEncoder) 
 
-    return train_data, test_data    
+    return scores_own, scores_other    
 
 # If I'm being run as a script:
 if __name__ == '__main__':
