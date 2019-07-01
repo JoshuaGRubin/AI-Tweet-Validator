@@ -1,9 +1,9 @@
 {
   "max_tweets_per_user" : 1000,
-  "raw_data_path":"data/raw",
-  "preprocessed_data_path":"data/preprocessed",
-  "processed_data_path":"data/processed",
-  "eval_output_path":"data/model_eval",
+  "raw_data_path":"../data/raw",
+  "preprocessed_data_path":"../data/preprocessed",
+  "processed_data_path":"../data/processed",
+  "eval_output_path":"../data/model_eval",
   "min_tweet_characters" : 1,
   "regexp_tweet_filters": [
            "http\\S+",
@@ -21,5 +21,6 @@
            "@Slavojiek",
            "@StephenCurry30",
            "@tim_cook",
-           "@YoYo_Ma"         ]
+           "@YoYo_Ma",
+           "@MrPeanut"         ]
 }
