@@ -14,27 +14,27 @@ from base_model import Model
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 class TFIDFModel(Model):
-    """ Derives a model that characterizes the corpus with a single normalized
-        mean vector at initialization.  Inference is performed by cosine
-        similarity with a threshold to produce true for inconsistent/fraudulent
-        and false for consistent/authentic.
+    """ Initializez TF/TFIDF model according to the standard model idiom.
+    
+        Args:
+        use_context (boolean): Initialize the model as either (false)
+        term-frequency or (true) term-frequency-inverse-document-frequency.
     """
-    def __init__(self, use_context=True):
+    def __init__(self, use_context=True):      
+        # Default setting; change with set_hyperparameter on base-class
+        self.params = {'threshold':0.3}
+        self.use_context = use_context
+
+    def characterize(self, corpus, context_corpus):
         """Computes TFIDF for a corpus of user tweets.  TF is computed from
         concatinated tweets.  IDF is computed in conjunction with an optional
-        corpus of non-user tweets. 
+        corpus of non-user tweets (depends on use_contxt value in constuctor). 
         
         Args:
         user_tweet_corpus (np.array): Array of text tweets by the user to model
         context_tweet_corpus (np.array): Optional array non-user tweets for
             common word normalization.  If none, skip the IDF (default:none).
         """
-       
-        # Default setting; change with set_hyperparameter on base-class
-        self.params = {'threshold':0.3}
-        self.use_context = use_context
-
-    def characterize(self, corpus, context_corpus):        
         if self.use_context:  # provided context vector to support IDF
             tfidf_vectorizer = TfidfVectorizer(stop_words='english',
                                                        use_idf=True)
@@ -52,6 +52,16 @@ class TFIDFModel(Model):
         self.feature_names = tfidf_vectorizer.get_feature_names()
         
     def similarity_score(self, tweets):
+        """ Computes similarity score of corpus characterization and input
+        tweets.
+        
+        Args:
+        tweets (1D numpy array): plaintext tweets. 
+            
+        Returns:
+        1D numpy array: similarity scores by tweet supplied.
+        """
+        
         tfidf_vectorizer = TfidfVectorizer(stop_words='english', use_idf=False,
                                            vocabulary = self.feature_names)
         
@@ -61,12 +71,14 @@ class TFIDFModel(Model):
 
     
     def infer(self, tweets):
-        """ Computes cosine similarity of average corpus characterization
-            and input embedded tweet.  Must (for now) pass a pre-embedded
-            list of tweets to <embedded_tweets>.
+        """ Applies a threshold to each similarity score to produce a boolean
+        indicator.  Fraudulent:True.
             
-            Return value:
-            Array of true/false values corresponding to fraud/authentic.
-        """
+            Args:
+            tweets (1D numpy array): plaintext tweets. 
+        
+            Returns:
+            1D numpy array: true/false values corresponding to fraud/authentic.
+        """        
         
         return self.similarity_score(tweets) < self.params['threshold']
