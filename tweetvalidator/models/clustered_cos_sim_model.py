@@ -130,6 +130,6 @@ class ClusteredCosSimModel(Model):
         
         tweet_scores =  self.similarity_score(embedded_tweets)       
         
-        return not tweet_scores < self.params['threshold']
+        return tweet_scores < self.params['threshold']
         
         
