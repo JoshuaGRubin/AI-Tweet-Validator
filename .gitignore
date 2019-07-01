@@ -1,3 +1,5 @@
 source/data_mining/__pycache__
 source/models/__pycache__
 tweetvalidator/models/__pycache__
+src/tweetvalidator/models/__pycache__
+src/tweetvalidator/__pycache__
