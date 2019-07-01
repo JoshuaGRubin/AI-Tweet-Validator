@@ -1,0 +1,3 @@
+#!/bin/bash
+#docker run --rm -ti -v ${PWD}:/app/ -p 8989:8989 --hostname localhost --net=host test:latest bash
+docker run --rm -ti -v ${PWD}:/app/ -p 8989:8989 --hostname localhost --ipc=host test:latest bash
