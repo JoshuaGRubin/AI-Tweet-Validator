@@ -3,3 +3,5 @@ source/models/__pycache__
 tweetvalidator/models/__pycache__
 src/tweetvalidator/models/__pycache__
 src/tweetvalidator/__pycache__
+src/tweetvalidator/data_processing/__pycache__
+src/scripts/__pycache__
