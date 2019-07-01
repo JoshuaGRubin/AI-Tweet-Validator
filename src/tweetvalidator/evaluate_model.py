@@ -11,11 +11,7 @@ import os
 import json
 import numpy as np
 import pandas as pd
-from tfidf_model import TFIDFModel
 from sklearn.model_selection import train_test_split
-from clustered_cos_sim_model import ClusteredCosSimModel as EmbModel
-
-CONFIG_PATH = "../../config.json" 
 
 def load_tweets_from_directory(directory_path, split_frac = 0.4,
                                random_state = None):
@@ -55,7 +51,7 @@ class NumpyEncoder(json.JSONEncoder):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
 
-def evaluate_model_performance(model, data_column,
+def generate_similarity_scores(model, data_column,
                                file_prefix = '',
                                score_args = {},
                                config_file_dir=None,
@@ -86,21 +82,6 @@ def evaluate_model_performance(model, data_column,
         
     (2-tuple of arrays): Own and other similarity score arrays.
     """
-    with open(CONFIG_PATH, 'r') as file:
-        config =  json.loads(file.read())
-
-    # Pull standard config file if not explicitly overridden
-    if not config_file_dir:
-        config_file_dir = os.path.dirname(os.path.abspath(CONFIG_PATH))
-
-    # Use config-specified input data location unless overridden 
-    if not input_directory:
-        input_directory  = os.path.join(config_file_dir,
-                                        config['processed_data_path'])
-        
-    if not output_directory:
-        output_directory =  os.path.join(config_file_dir,
-                                         config['eval_output_path'])
 
     train_data, test_data = load_tweets_from_directory(input_directory,
                                                        random_state = 1)  
@@ -139,34 +120,3 @@ def evaluate_model_performance(model, data_column,
         json.dump(scores_other, file, cls=NumpyEncoder) 
 
     return scores_own, scores_other    
-
-# If I'm being run as a script:
-if __name__ == '__main__':
-
-    evaluate_model_performance(EmbModel(max_clusters=1, verbose=True),
-                               'embedding',
-                               file_prefix = 'emb_1_scaled',
-                               score_args={'cluster_scaling':True})
-
-    evaluate_model_performance(EmbModel(max_clusters=1, verbose=False),
-                               'embedding',
-                               file_prefix = 'emb_1',
-                               score_args={'cluster_scaling':False})
-    
-    evaluate_model_performance(EmbModel(max_clusters=2, verbose=True),
-                               'embedding',
-                               file_prefix = 'emb_2_scaled',
-                               score_args={'cluster_scaling':True})
-
-    evaluate_model_performance(EmbModel(max_clusters=2, verbose=False),
-                               'embedding',
-                               file_prefix = 'emb_2',
-                               score_args={'cluster_scaling':False})  
-    
-    evaluate_model_performance(TFIDFModel(use_context=True),
-                               'tweet',
-                               file_prefix = 'tfidf') 
-    
-    evaluate_model_performance(TFIDFModel(use_context=False),
-                               'tweet',
-                               file_prefix = 'tf') 

@@ -12,7 +12,7 @@ June, 2019
 """
 
 import numpy as np
-from base_model import Model
+from .base_model import Model
 
 # This is an implementation of k-means on the hypersphere which uses
 # cosine similarity rather than cartesian distance to cluster.

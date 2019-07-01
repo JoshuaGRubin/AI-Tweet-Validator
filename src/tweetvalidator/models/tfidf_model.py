@@ -10,7 +10,7 @@ June, 2019
 @author: Joshua Rubin
 """
 
-from base_model import Model
+from .base_model import Model
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 class TFIDFModel(Model):
