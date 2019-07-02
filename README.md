@@ -1,5 +1,9 @@
-# Insight_Project_Framework
-Framework for machine learning projects at Insight Data Science.
+# Did I write this?  
+Fraudulent posts on social media are embarrassing to individuals and expensive to brands.  Language embedding models offer a means to characterize typical activity for a user and can be applied in a simple binary discriminator to screen incoming content.
+
+This repository provides a demonstration of the use of language embedding (via [Universal Sentence Encoder](https://tfhub.dev/google/universal-sentence-encoder/2)) to classify new Twitter posts as in or out-of-character for a particular user.  In a production system (implemented on the platform side), a user could be presented with secondary authentication to validate activity for the occasional false positive.
+
+https://bit.ly/didIWriteThis
 
 ## Motivation for this project format:
 - **Insight_Project_Framework** : Put all source code for production within structured directory
