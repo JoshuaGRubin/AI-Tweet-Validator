@@ -19,7 +19,6 @@ import tensorflow_hub as hub
 
 # Retrieve Universal Eentence Sncoder.
 MODULE_URL  = "https://tfhub.dev/google/universal-sentence-encoder/2"
-CONFIG_PATH = "../../config.json" 
 
 class SentenceEncoder:
     """ Encapsulates the Universal Sentence Encoder
@@ -31,6 +30,7 @@ class SentenceEncoder:
     """
     def __init__(self, url = MODULE_URL):
         print('Initializing embedding model.  May take a few seconds.')
+        print("(And longer if I haven't downloaded it yet.)")
         self.session = tf.Session()
         self.embed = hub.Module(url)
         self.session.run([tf.global_variables_initializer(),
@@ -40,7 +40,11 @@ class SentenceEncoder:
         self.output = self.embed(self.messagesPlaceholder)
     
     def embed_phrases(self, phrase_list):
-        """ Takes a array or list of phrases and returns a array of embeddings.
+        """ Takes a array or list of phrases and returns an array of
+            embeddings.
+            
+            Args:
+                phrase_list (1D numpy array):  Array of phrases to encode. 
         """ 
         return self.session.run(self.output,
                                 feed_dict={self.messagesPlaceholder:
@@ -52,6 +56,12 @@ class SentenceEncoder:
 def embed_tweets_from_file(input_file_path, output_file_path, encoder = None):
     """ Read tweets from json file in <input_file_path>, embed, and output
     to <output_file_path>.
+        
+    Args:
+        input_directory_path (str): path of input user file.
+        output_directory_path (str): path to where to put user data with
+            embeddings added.
+    
     """    
     # If the encoder isn't passed in.  Otherwise reuse the one given.
     if not encoder:
@@ -77,10 +87,13 @@ def embed_tweets_from_file(input_file_path, output_file_path, encoder = None):
         
 def embed_tweets_from_directories(input_directory_path, output_directory_path): 
     """ Convenience function to apply Universal Sentance Encoder to all the
-    json files in <input_dirextory_path> and writing them to
-    <output_directory_path>.
+    json files in an input directory.  Only files starting with '@' are
+    processed.
     
-    Only files starting with '@' are processed.
+    Args:
+        input_directory_path (str): path to look for preprocessed user files
+        output_directory_path (str): path to deposit user data with embeddings
+            added.
     """      
     
     # Initialize embedding model; reuse for each file.
@@ -94,16 +107,3 @@ def embed_tweets_from_directories(input_directory_path, output_directory_path):
         output_file_path = os.path.join(output_directory_path, file_name)
         embed_tweets_from_file(input_file_path,
                                output_file_path, encoder = sentence_encoder)
-        
-# If I'm being run as a script... otherwise just provide getTweetsByUser. 
-if __name__ == '__main__':
-    
-    with open(CONFIG_PATH, 'r') as file:
-        config =  json.loads(file.read())
-
-    config_file_dir = os.path.dirname(os.path.abspath(CONFIG_PATH))
-
-    input_directory  = os.path.join(config_file_dir, config['preprocessed_data_path'])
-    output_directory = os.path.join(config_file_dir, config['processed_data_path'])  
-    
-    embed_tweets_from_directories(input_directory, output_directory)
