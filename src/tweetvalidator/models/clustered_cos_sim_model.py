@@ -28,7 +28,9 @@ class ClusteredCosSimModel(Model):
         k-means (which uses similarity rather than cartesian distance) to
         properly cluster normalized vectors on the unit-hypersphere.
     """
-    def __init__(self, embedded_corpus=True, max_clusters=1, verbose=False):
+    def __init__(self, embedded_corpus=True, max_clusters=1,
+                 dynamic_clustering=False, dynamic_cutoff,
+                 verbose=False):
         """ Requires a pre-embedded corpus passed in through <embedded_corpus>.
         """
  
@@ -39,23 +41,43 @@ class ClusteredCosSimModel(Model):
         self.embedded_corpus = embedded_corpus
         self.verbose = verbose
         # Default setting; change with set_hyperparameter on base-class
-        self.params = { 'threshold': 0.3 }   
-        
+        self.params = { 'threshold': 0.3 }
+        self.dynamic_clustering = dynamic_clustering
+        self.dynamic_cutoff = dynamic_cutoff
         self.characterization_complete = False
      
     def characterize(self, corpus, context_corpus):
         
         # Because dataframe holds nested arrays awkwardly
         corpus = np.asarray([x for x in corpus])
-                   
-        kmeans = SphericalKMeans(n_clusters=self.max_clusters,
+
+        cmap=[]
+        prev = 1000.
+        if self.dynamic_clustering:
+            for nc in range(1, self.max_clusters+1):
+                kmeans = SphericalKMeans(n_clusters=nc,
+                                         random_state=0).fit(corpus)
+                if self.verbose:
+                    print(f"{nc:3} {kmeans.inertia_:5.2} "
+                          "({(prev - kmeans.inertia_)/prev:5.2})")
+                cmap.append(kmeans.inertia_)
+                if (prev - kmeans.inertia_)/prev < self.dynamic_cutoff:
+                    self.clusters_used = nc - 1
+                    if self.verbose:
+                        print(f'Using {self.clusters_used} clusters.')
+                    break
+                prev = kmeans.inertia_
+        else:
+            self.clusters_used = self.max_clusters
+            
+        kmeans = SphericalKMeans(n_clusters=self.clusters_used,
                                  random_state=0).fit(corpus)
                
         self.cluster_means = kmeans.cluster_centers_
     
-        sim_sum            = np.zeros(self.max_clusters)
-        self.cluster_count = np.zeros(self.max_clusters, dtype=np.int)
-        self.cluster_edges = np.ones(self.max_clusters)
+        sim_sum            = np.zeros(self.clusters_used)
+        self.cluster_count = np.zeros(self.clusters_used, dtype=np.int)
+        self.cluster_edges = np.ones(self.clusters_used)
     
         # Compute characteristics of each cluster
         for cluster_idx, embedded_tweet in zip(kmeans.labels_, corpus):
