@@ -5,6 +5,23 @@ This repository provides a demonstration of the use of language embedding (via [
 
 https://bit.ly/didIWriteThis
 
+## Setup
+
+The reccomended way to run this project is by installing Docker and building and running an image.  This maximizes stability and portibility.  It also manages environment variables nicely. 
+
+
+- First, visit https://www.docker.com to install the Docker platform (e.g. Docker Desktop) on your machine.
+
+- *Optional*: while data from 13 Twitter users in included in the `data/raw` directory, if you'd like to be able to retrieve your own (e.g. more/other users, more recent tweets), you'll need to set up a Twitter developer account and app.  To do so, please visit https://developer.twitter.com, create an app, and have it approved.  Once this is complete, you'll have access to API keys.  To enable API access in this package, please uncomment the appropriate four rows in `build\Dockerfile` and paste in your credientials.
+
+- To build and run your container, run the following in your command shell.
+
+```bash
+cd <project directory>
+./build_docker
+./run_docker
+```
+
 ## Motivation for this project format:
 - **Insight_Project_Framework** : Put all source code for production within structured directory
 - **tests** : Put all source code for testing in an easy to find location
