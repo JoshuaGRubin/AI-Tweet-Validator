@@ -60,7 +60,14 @@ source <project_path>/insightTwitterCreds.bat
 
 
 ## Configs
-- Coming soon!
+`configs\config.json` allows you to cusomize a number of features of the project pipeline.  These include:
+
+- User-list to retrieve from twitter
+- Maximum-number of tweets per user
+- Minumum tweet length
+- Regular expressions to use in tweet filtering
+- Paths to data directories
+
 
 ## Test
 - Coming soon!
