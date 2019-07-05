@@ -33,9 +33,9 @@ cd <project_path>
 While this setup has a few more steps and possibly plateform-dependent pitfalls, there's less to download and store on disk.
 
 - Install a Python 3.x Anaconda environment from https://www.anaconda.com/distribution.
-- Run the following to install dependencies.
+- Run the following to create a new conda/Python environment:
 
-```
+```bash
 conda create --name <environment_name>
 conda activate <environment_name>
 conda install pip
@@ -43,18 +43,20 @@ conda install pip
 # Install project dependencies - includes `tweetvalidator`, the core module provided by this project.
 cd <project_path>/build
 pip install -r requirements.txt
+```
+
 
 - If you're going to be using the Twitter API, edit build/insightTwitterCreds.bat and add your credentials.
 Run:
 ```
-source insightTwitterCreds.bat
+source twitter_creds.bat.bat
 ```
 
 - Please keep in mind that you'll have to `conda activate <environment_name>` every time a shell launches.  If you plan on spending a lot of time working with this package, consider adding the following lines the end of your `~/.bash_profile`:
 
 ```
 conda activate <environment_name>
-source <project_path>/insightTwitterCreds.bat
+source <project_path>/twitter_creds.bat.bat
 ```
 
 
