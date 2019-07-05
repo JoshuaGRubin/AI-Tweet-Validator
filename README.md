@@ -38,18 +38,17 @@ While this setup has a few more steps and possibly plateform-dependent pitfalls,
 ```
 conda create --name <environment_name>
 conda activate <environment_name>
+conda install pip
+
+# Install project dependencies - includes `tweetvalidator`, the core module provided by this project.
 cd <project_path>/build
 pip install -r requirements.txt
-cd <project_path>/src
-pip install -e <environment_name>/src/tweetvalidator/
-```
+
 - If you're going to be using the Twitter API, edit build/insightTwitterCreds.bat and add your credentials.
 Run:
 ```
 source insightTwitterCreds.bat
 ```
-
-- **Close your terminal, open a new shell, and** `conda activate <environment_name>`
 
 - Please keep in mind that you'll have to `conda activate <environment_name>` every time a shell launches.  If you plan on spending a lot of time working with this package, consider adding the following lines the end of your `~/.bash_profile`:
 
