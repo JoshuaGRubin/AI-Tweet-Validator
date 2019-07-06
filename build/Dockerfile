@@ -1,10 +1,10 @@
 FROM manifoldai/orbyter-ml-dev:1.7
-ADD requirements.txt /app/requirements.txt
+ADD requirements_docker.txt /app/requirements_docker.txt
 # set working directory to /app/
 WORKDIR /app/
 # set up pip and install python packages
 RUN apt-get update &&\
-pip3 install -r requirements.txt
+pip3 install -r requirements_docker.txt
 # create unprivileged user
 RUN adduser --disabled-password --gecos ‘’ myuser
 # make tweetvalidator available in Python path
