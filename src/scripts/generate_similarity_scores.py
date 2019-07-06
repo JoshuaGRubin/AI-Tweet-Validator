@@ -7,26 +7,15 @@ June, 2019
 @author: Joshua Rubin
 """
 
-CONFIG_PATH = "../../configs/config.json" 
+from get_config import get_config
+config = get_config()
 
-import os
-import json
 from tweetvalidator.models import TFIDFModel
 from tweetvalidator.models import ClusteredCosSimModel
 from tweetvalidator import generate_similarity_scores
 
-
-with open(CONFIG_PATH, 'r') as file:
-    config =  json.loads(file.read())
-
-config_file_dir = os.path.dirname(os.path.abspath(CONFIG_PATH))
-
-# Use config-specified input data location unless overridden 
-input_directory  = os.path.join(config_file_dir, config['processed_data_path'])
-output_directory =  os.path.join(config_file_dir, config['eval_output_path'])
-
-dir_args = {'input_directory':input_directory,
-            'output_directory':output_directory}
+dir_args = {'input_directory'  : config['processed_data_path'],
+            'output_directory' : config['eval_output_path']}
 
 print('Running term-frequency model.')
 generate_similarity_scores(TFIDFModel(use_context=True),

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Retrieves the project configuration regardless of PWD.
 
 June, 2019
 @author: Joshua Rubin
