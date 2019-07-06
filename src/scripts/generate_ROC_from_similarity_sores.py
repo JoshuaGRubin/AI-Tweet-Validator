@@ -23,6 +23,10 @@ config = get_config()
 input_directory  = config['eval_output_path']
 output_directory = config['graph_output_path']
 
+if not os.path.isdir(output_directory):
+    print(f"Path doesn't exist; creating {output_directory}.")
+    os.makedirs(output_directory)
+
 contents = os.listdir(input_directory)
 
 labels = [x.split('_own.json')[0] for x in contents if '.json' in x
