@@ -8,4 +8,3 @@ spherecluster==0.1.7
 tensorflow==1.13.1
 tensorflow-hub==0.4.0
 -e ../src
-git+https://github.com/jupyter/jupyter_console
