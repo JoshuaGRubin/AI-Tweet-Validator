@@ -6,24 +6,22 @@ Injests similarity scores and produces an ROC/AUC graph.
 June, 2019
 @author: Joshua Rubin
 """
-
 import os
-import json
 import numpy as np
 import pandas as pd
+
+
+import matplotlib as mpl
+mpl.use('TkAgg')
 import matplotlib.pyplot as plt
+
 from sklearn.metrics import (roc_curve, roc_auc_score)
 
-CONFIG_PATH = "../../configs/config.json" 
+from get_config import get_config
+config = get_config()
 
-with open(CONFIG_PATH, 'r') as file:
-    config =  json.loads(file.read())
-
-config_file_dir = os.path.dirname(os.path.abspath(CONFIG_PATH))
-
-# Use config-specified input data location unless overridden 
-input_directory  = os.path.join(config_file_dir, config['eval_output_path'])
-output_directory =  os.path.join(config_file_dir, config['graph_output_path'])
+input_directory  = config['eval_output_path']
+output_directory = config['graph_output_path']
 
 contents = os.listdir(input_directory)
 
@@ -47,11 +45,11 @@ for lab, (own, other) in zip(labels, dat):
 
     plt.plot(fpr,tpr, label=f'{auc:.2}:{lab}')
 
-plt.plot([0,1],[0,1],'k--');
+plt.plot([0,1],[0,1],'k--')
 plt.xlabel('False Positive Rate', fontsize = 14)
 plt.ylabel('True Positive Rate', fontsize = 14)
-legend = plt.legend(fontsize = 12, title='AUC:Model', )
+legend = plt.legend(fontsize = 12, title='AUC:Model')
 plt.title('ROC', fontsize = 14)
-plt.setp(legend.get_title(),fontsize='14');
+plt.setp(legend.get_title(),fontsize='14')
 
 plt.savefig(os.path.join(output_directory,'ROC_AUC_Comparison.png'))

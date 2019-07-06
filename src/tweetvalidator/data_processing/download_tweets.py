@@ -20,6 +20,14 @@ import tweepy
 def connect_to_twitter_OAuth():
     """ Connect to Twitter API and return tweepy api object. """
     
+    if (    'TWITTER_CONSUMER_KEY'    not in os.environ
+         or 'TWITTER_CONSUMER_SECRET' not in os.environ 
+         or 'TWITTER_ACCESS_TOKEN'    not in os.environ
+         or 'TWITTER_ACCESS_SECRET'   not in os.environ  ):
+        print('Twitter credentials not properly defined in environment.')
+        return False
+    
+    
     ## Pull in keys from your environment
     CONSUMER_KEY    = os.environ['TWITTER_CONSUMER_KEY']
     CONSUMER_SECRET = os.environ['TWITTER_CONSUMER_SECRET']
@@ -47,18 +55,20 @@ def get_tweets_by_user(user, output_path = None, max_tweets = 10):
     # Create API object
     api = connect_to_twitter_OAuth()
     
-    # Make a list of tuples.    
-    tweets = [(x.text, str(x.created_at)) for x in
-              tweepy.Cursor(api.user_timeline, id = user).items(max_tweets)]
-
-    if output_path:
-        output_path = os.path.join(output_path, user + '.json')
-    else:
-        output_path = os.path.join('.', user + '.json')
-
-    with open(output_path, 'w') as file:
-        json.dump(tweets, file)
-
-    # Notify the human
-    print('Retrieved',len(tweets), 'tweets for',
-          user + '. Wrote to', output_path + '.')
+    if api:
+    
+        # Make a list of tuples.    
+        tweets = [(x.text, str(x.created_at)) for x in
+                  tweepy.Cursor(api.user_timeline, id = user).items(max_tweets)]
+    
+        if output_path:
+            output_path = os.path.join(output_path, user + '.json')
+        else:
+            output_path = os.path.join('.', user + '.json')
+    
+        with open(output_path, 'w') as file:
+            json.dump(tweets, file)
+    
+        # Notify the human
+        print('Retrieved',len(tweets), 'tweets for',
+              user + '. Wrote to', output_path + '.')
