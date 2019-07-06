@@ -7,9 +7,9 @@ June, 2019
 @author: Joshua Rubin
 """
 
-import os
-from get_config import get_config
+from get_config import (get_config, create_dir_if_not_there)
 config = get_config()
+create_dir_if_not_there(config['eval_output_path'])
 
 from tweetvalidator.models import TFIDFModel
 from tweetvalidator.models import ClusteredCosSimModel
@@ -17,13 +17,6 @@ from tweetvalidator import generate_similarity_scores
 
 dir_args = {'input_directory'  : config['processed_data_path'],
             'output_directory' : config['eval_output_path']}
-
-input_directory = config['preprocessed_data_path']
-output_directory = config['processed_data_path']
-
-if not os.path.isdir(output_directory):
-    print(f"Path doesn't exist; creating {dir_args['output_directory']}.")
-    os.makedirs(dir_args['output_directory'])
 
 print('Running term-frequency model.')
 generate_similarity_scores(TFIDFModel(use_context=True),

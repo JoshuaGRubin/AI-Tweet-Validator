@@ -48,4 +48,7 @@ def get_config(config_path = None):
 
     return config
 
-get_config()
+def create_dir_if_not_there(path):
+    if not os.path.isdir(path):
+        print(f"Path doesn't exist; creating {path}.")
+        os.makedirs(path)

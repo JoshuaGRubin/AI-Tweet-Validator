@@ -17,8 +17,9 @@ import matplotlib.pyplot as plt
 
 from sklearn.metrics import (roc_curve, roc_auc_score)
 
-from get_config import get_config
+from get_config import (get_config, create_dir_if_not_there)
 config = get_config()
+create_dir_if_not_there(config['graph_output_path'])
 
 input_directory  = config['eval_output_path']
 output_directory = config['graph_output_path']

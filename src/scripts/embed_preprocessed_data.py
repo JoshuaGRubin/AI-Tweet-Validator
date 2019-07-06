@@ -8,19 +8,12 @@ June, 2019
 @author: Joshua Rubin
 """
 
-import os
-from get_config import get_config
+from get_config import (get_config, create_dir_if_not_there)
 from tweetvalidator.data_processing import embed_tweets_from_directories
 
 config = get_config()
+create_dir_if_not_there(config['processed_data_path'])
 
-input_directory = config['preprocessed_data_path']
-output_directory = config['processed_data_path']
-
-if not os.path.isdir(output_directory):
-    print(f"Path doesn't exist; creating {output_directory}.")
-    os.makedirs(output_directory)
-
-embed_tweets_from_directories(input_directory, 
-                              output_directory)
+embed_tweets_from_directories(config['preprocessed_data_path'], 
+                              config['processed_data_path'])
                               
