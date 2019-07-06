@@ -6,3 +6,4 @@ src/tweetvalidator/__pycache__
 src/tweetvalidator/data_processing/__pycache__
 src/scripts/__pycache__
 src/tweetvalidator.egg-info
+src/.vscode
