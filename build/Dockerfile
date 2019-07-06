@@ -7,5 +7,14 @@ RUN apt-get update &&\
 pip3 install -r requirements.txt
 # create unprivileged user
 RUN adduser --disabled-password --gecos ‘’ myuser
+# make tweetvalidator available in Python path
+ENV PYTHONPATH "${PYTHONPATH}:/app/src/"
+
+# Uncomment below and add credentials to access Twitter API
+# ENV TWITTER_CONSUMER_KEY "XXX"
+# ENV TWITTER_CONSUMER_SECRET "XXX"
+# ENV TWITTER_ACCESS_TOKEN "XXX"
+# ENV TWITTER_ACCESS_SECRET "XXX"
+
 # Run initial command
 CMD bash
