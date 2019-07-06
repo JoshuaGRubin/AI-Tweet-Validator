@@ -28,30 +28,36 @@ output_directory =  os.path.join(config_file_dir, config['eval_output_path'])
 dir_args = {'input_directory':input_directory,
             'output_directory':output_directory}
 
+print('Running term-frequency model.')
 generate_similarity_scores(TFIDFModel(use_context=True),
                            'tweet', **dir_args,
                            file_prefix = 'tfidf') 
 
+print('Running full TDIDF model.')
 generate_similarity_scores(TFIDFModel(use_context=False),
                            'tweet', **dir_args,
                            file_prefix = 'tf') 
 
-generate_similarity_scores(ClusteredCosSimModel(max_clusters=1, verbose=True),
-                           'embedding', **dir_args,
-                           file_prefix = 'emb_1_scaled',
-                           score_args={'cluster_scaling':True})
-
+print('Running mean embedding model.')
 generate_similarity_scores(ClusteredCosSimModel(max_clusters=1, verbose=False),
                            'embedding', **dir_args,
                            file_prefix = 'emb_1',
                            score_args={'cluster_scaling':False})
 
-generate_similarity_scores(ClusteredCosSimModel(max_clusters=2, verbose=True),
+print('Running mean embedding model with cluster size scaling.')
+generate_similarity_scores(ClusteredCosSimModel(max_clusters=1, verbose=True),
                            'embedding', **dir_args,
-                           file_prefix = 'emb_2_scaled',
+                           file_prefix = 'emb_1_scaled',
                            score_args={'cluster_scaling':True})
 
+print('Running two-cluster model.')
 generate_similarity_scores(ClusteredCosSimModel(max_clusters=2, verbose=False),
                            'embedding', **dir_args,
                            file_prefix = 'emb_2',
                            score_args={'cluster_scaling':False})
+
+print('Running two-cluster model with-cluster size scaling.')
+generate_similarity_scores(ClusteredCosSimModel(max_clusters=2, verbose=True),
+                           'embedding', **dir_args,
+                           file_prefix = 'emb_2_scaled',
+                           score_args={'cluster_scaling':True})

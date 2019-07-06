@@ -32,6 +32,6 @@ if not os.path.isdir(output_directory):
 for user in twitter_users_to_fetch:
     print(user)
     get_tweets_by_user(user,
-                       maxTweets = max_tweets_per_user,
+                       max_tweets = max_tweets_per_user,
                        output_path = output_directory)
     
