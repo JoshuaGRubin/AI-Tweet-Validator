@@ -59,6 +59,14 @@ conda activate <environment_name>
 source <project_path>/twitter_creds.bat.bat
 ```
 
+## Troubleshooting
+
+- There's a occationally a problem with TensorFlow Hub that casuses the following error:
+
+>Encoder tf-hub error:
+RuntimeError: Missing implementation that supports: loader(*('/var/folders/0w/pn889r517f9220q1vl66k7_h0000gn/T/tfhub_modules/1fb57c3ffe1a38479233ee9853ddd7a8ac8a8c47',), **{})
+
+This seeme to have something to do with the way Universal Sentence Encoder is cached.  Sometimes it's deleted, but TF Hub still thinks it's present.  If you encounter this, simply delete the directory mentioned in the error and rerun.
 
 ## Configs
 `configs\config.json` allows you to cusomize a number of features of the project pipeline.  These include:
