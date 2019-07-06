@@ -7,8 +7,9 @@ June, 2019
 @author: Joshua Rubin
 """
 
-from get_config import get_config
+from get_config import (get_config, create_dir_if_not_there)
 config = get_config()
+create_dir_if_not_there(config['eval_output_path'])
 
 from tweetvalidator.models import TFIDFModel
 from tweetvalidator.models import ClusteredCosSimModel

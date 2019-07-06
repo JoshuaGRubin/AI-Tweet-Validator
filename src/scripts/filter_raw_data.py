@@ -8,11 +8,13 @@ June, 2019
 @author: Joshua Rubin
 """
 
-from get_config import get_config
+from get_config import (get_config, create_dir_if_not_there)
 from tweetvalidator.data_processing import filter_tweets_from_directories
 
 # Pull-in filter settings from global configuration.    
 config = get_config()
+
+create_dir_if_not_there(config['preprocessed_data_path'])
 
 filter_tweets_from_directories(config['raw_data_path'],
                                config['preprocessed_data_path'],
