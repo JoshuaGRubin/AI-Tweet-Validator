@@ -79,9 +79,9 @@ This seeme to have something to do with the way Universal Sentence Encoder is ca
 
 
 ## Test
-To run a set of nontrivial unit-tests on the core tweetvalidator package, navigate to the directory and run pytest:
+To run a set of nontrivial unit-tests on the core tweetvalidator package, navigate to the tests directory and run pytest:
 
-    > cd <project_directory>/tests
+    > cd <project_path>/tests
     > pytest
 
 
