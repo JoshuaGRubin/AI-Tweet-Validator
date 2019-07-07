@@ -14,7 +14,7 @@ from .base_model import Model
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 class TFIDFModel(Model):
-    """ Initializez TF/TFIDF model according to the standard model idiom.
+    """ Initializes TF/TFIDF model according to the standard model idiom.
     
         Args:
         use_context (boolean): Initialize the model as either (false)
