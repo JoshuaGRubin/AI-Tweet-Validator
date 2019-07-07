@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Injests similarity scores and produces an ROC/AUC graph.
+Injests similarity scores and produces an ROC/AUC and other analysis outputs.
 
 June, 2019
 @author: Joshua Rubin
@@ -19,10 +19,11 @@ from sklearn.metrics import (roc_curve, roc_auc_score)
 
 from get_config import (get_config, create_dir_if_not_there)
 config = get_config()
-create_dir_if_not_there(config['graph_output_path'])
 
 input_directory  = config['eval_output_path']
-output_directory = config['graph_output_path']
+output_directory = config['analysis_output_path']
+
+create_dir_if_not_there(output_directory)
 
 if not os.path.isdir(output_directory):
     print(f"Path doesn't exist; creating {output_directory}.")
