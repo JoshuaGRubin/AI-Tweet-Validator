@@ -16,7 +16,7 @@ Clone this repo with `git clone https://github.com/JoshuaGRubin/AI-Tweet-Validat
 
 - First, visit https://www.docker.com to install the Docker platform (e.g. Docker Desktop) on your machine.
 
-- If you've created a Twitter developer account and you'd like to download new content, uncomment the appropriate four rows in `build\Dockerfile` and paste in your credentials.
+- If you've created a Twitter developer account and you'd like to download new content, uncomment the specified four rows in `build\Dockerfile` and paste in your credentials.
 
 - To build and run your container, run the following in your command shell.
 
