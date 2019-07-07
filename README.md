@@ -83,7 +83,3 @@ To run a set of nontrivial unit-tests on the core tweetvalidator package, naviga
 
     > cd <project_path>/tests
     > pytest
-
-
-## Analysis
-- Include some form of EDA (exploratory data analysis)
