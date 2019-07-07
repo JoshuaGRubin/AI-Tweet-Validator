@@ -26,7 +26,7 @@ Clone this repo with `git clone https://github.com/JoshuaGRubin/AI-Tweet-Validat
 > ./run_docker
 ```
 
-- At this point, you should be able to `cd src/scripts` and `python <script_name>` to run any of the example scripts.  You also have the library, 'tweetvalidator' (from src/tweetvalidator) available in you `PYTHONPATH`, so you can include it in any of your own scripts.
+- At this point, you should be in a Docker shell at the root level of the project directory, mounted to `/app/` and shared with your host OS.  You should be able to `cd src/scripts` and `python <script_name>` to run any of the example scripts.  You also have the library, 'tweetvalidator' (from src/tweetvalidator) available in you `PYTHONPATH`, so you can include it in any of your own scripts.
 
 ### Setup with Anaconda – *lightweight*
 
