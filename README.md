@@ -3,7 +3,7 @@ Fraudulent posts on social media are embarrassing to individuals and expensive t
 
 This repository provides a demonstration of the use of language embedding (via [Universal Sentence Encoder](https://tfhub.dev/google/universal-sentence-encoder/2)) to classify new Twitter posts as in or out-of-character for a particular user.  In a production system (implemented on the platform side), a user could be presented with secondary authentication to validate activity for the occasional false positive.
 
-https://bit.ly/didIWriteThis
+Slides desribing this project can be found here:  https://bit.ly/didIWriteThis
 
 ## Setup
 
@@ -21,9 +21,9 @@ Clone this repo with `git clone https://github.com/JoshuaGRubin/AI-Tweet-Validat
 - To build and run your container, run the following in your command shell.
 
 ```bash
-cd <project_path>
-./build_docker
-./run_docker
+> cd <project_path>
+> ./build_docker
+> ./run_docker
 ```
 
 - At this point, you should be able to `cd src/scripts` and `python <script_name>` to run any of the example scripts.  You also have the library, 'tweetvalidator' (from src/tweetvalidator) available in you `PYTHONPATH`, so you can include it in any of your own scripts.
@@ -36,27 +36,27 @@ While this setup has a few more steps and possibly plateform-dependent pitfalls,
 - Run the following to create a new conda/Python environment:
 
 ```bash
-conda create --name <environment_name>
-conda activate <environment_name>
-conda install pip
+> conda create --name <environment_name>
+> conda activate <environment_name>
+> conda install pip
 
 # Install project dependencies - includes `tweetvalidator`, the core module provided by this project.
-cd <project_path>/build
-pip install -r requirements.txt
+> cd <project_path>/build
+> pip install -r requirements.txt
 ```
 
 
 - If you're going to be using the Twitter API, edit build/insightTwitterCreds.bat and add your credentials.
 Run:
 ```
-source twitter_creds.bat.bat
+> source twitter_creds.bat.bat
 ```
 
 - Please keep in mind that you'll have to `conda activate <environment_name>` every time a shell launches.  If you plan on spending a lot of time working with this package, consider adding the following lines the end of your `~/.bash_profile`:
 
 ```
-conda activate <environment_name>
-source <project_path>/twitter_creds.bat.bat
+> conda activate <environment_name>
+> source <project_path>/twitter_creds.bat.bat
 ```
 
 ## Troubleshooting
@@ -79,7 +79,11 @@ This seeme to have something to do with the way Universal Sentence Encoder is ca
 
 
 ## Test
-- Coming soon!
+To run a set of nontrivial unit-tests on the core tweetvalidator package, navigate to the directory and run pytest:
+
+    > cd <project_directory>/tests
+    > pytest
+
 
 ## Analysis
 - Include some form of EDA (exploratory data analysis)
