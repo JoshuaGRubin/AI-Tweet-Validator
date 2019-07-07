@@ -49,14 +49,14 @@ While this setup has a few more steps and possibly plateform-dependent pitfalls,
 - If you're going to be using the Twitter API, edit build/insightTwitterCreds.bat and add your credentials.
 Run:
 ```
-> source twitter_creds.bat.bat
+> source twitter_creds.txt
 ```
 
 - Please keep in mind that you'll have to `conda activate <environment_name>` every time a shell launches.  If you plan on spending a lot of time working with this package, consider adding the following lines the end of your `~/.bash_profile`:
 
 ```
 > conda activate <environment_name>
-> source <project_path>/twitter_creds.bat.bat
+> source <project_path>/twitter_creds.txt
 ```
 
 ## Troubleshooting
