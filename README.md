@@ -20,7 +20,7 @@ Clone this repo with `git clone https://github.com/JoshuaGRubin/AI-Tweet-Validat
 
 - To build and run your container, run the following in your command shell.
 
-```bash
+```
 > cd <project_path>
 > ./build_docker
 > ./run_docker
@@ -35,7 +35,7 @@ While this setup has a few more steps and possibly plateform-dependent pitfalls,
 - Install a Python 3.x Anaconda environment from https://www.anaconda.com/distribution.
 - Run the following to create a new conda/Python environment:
 
-```bash
+```
 > conda create --name <environment_name>
 > conda activate <environment_name>
 > conda install pip
