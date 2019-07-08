@@ -68,7 +68,7 @@ which contains reusable core components.  In either of the two installation scen
 - `tweetvalidator.data_processing` contains tools for downloading, filtering, and embedding Twitter data.
 - `tweetvalidator.models` contains the embedding-based models ('clustered_cos_sim_model'), which can be used for mean embedding and a variety of multi-cluster variations, as well as a term-frequency model (TF and TDIDF) as a statistical baseline.  Each of these models has a `characterize` method in which it's initialized and a similarity_score method for comparing a new tweet against the model's characterization.
 
-### 2. A directory `scripts`,
+### 2. A directory, `scripts`,
 which take advantage of `tweetvalidator`, and can be run out-of-the-box to produce the results presented in the slides provided above.  Furthermore, the data directories come pre-populated with tweets from sixteen users.  **These scripts are the best starting place to running project** and provide examples for how to use the functionality in `tweetvalidator` if one wanted to build on this work.
 
 These scripts get their configuration details (data directories and settings) from `<project_path>/configs/config.json`. The project flow, which moves data from directory-to-directory at each step is depicted in the following diagram:
@@ -83,20 +83,18 @@ The variables below are specified in `config.json`.  Run these scripts (e.g. `>p
 - **generate_similarity_scores.py** reads data from `processed_data_path`; splits it into user-characterization and test sets; initializes a variety of models, both embedding-based and term-frequency-based; and uses those models to generate cosine similarity scores for the test data.  These results are written to `eval_output_path`.  *Ideally*, the selection of models and variations would be configurable in `config.json`, but that's a future to-do, and in the meantime, `generate_similarity_scores.py` can be copied and modified (it is an example, after all!).
 - **analyze_similarity_sores.py** reads similarity scores from `eval_output_path` and generates ROC/AUC graphs and data tables providing "sensitivity at false-positive-rate x" statements.  Results are written to `analysis_output_path`.
 
+## Test
+To run a set of nontrivial unit-tests on the core tweetvalidator package, navigate to the tests directory and run pytest:
+
+    > cd <project_path>/tests
+    > pytest
+
 ## Troubleshooting
 
- There's occasionally a problem with TensorFlow Hub that causes the following error:
+There's occasionally a problem with TensorFlow Hub that causes the following error:
 
 >Encoder tf-hub error:
 RuntimeError: Missing implementation that supports: loader(*('/var/folders/0w/pn889r517f9220q1vl66k7_h0000gn/T/tfhub_modules/1fb57c3ffe1a38479233ee9853ddd7a8ac8a8c47',), **{})
 
 This seems to have something to do with the way Universal Sentence Encoder is cached.  Sometimes it's deleted, but TF Hub still thinks it's present.  If you encounter this, simply delete the directory mentioned in the error and rerun.
 
-## Configs
-`configs\config.json` allows one to customize a number of features of the project pipeline.  See “Running the Project” above.
-
-## Test
-To run a set of nontrivial unit-tests on the core tweetvalidator package, navigate to the tests directory and run pytest:
-
-    > cd <project_path>/tests
-    > pytest
