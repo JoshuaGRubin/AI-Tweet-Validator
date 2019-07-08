@@ -85,7 +85,7 @@ The variables below are specified in `config.json`.  Run these scripts (e.g. `>p
 
 ## Troubleshooting
 
- There's a occasionally a problem with TensorFlow Hub that causes the following error:
+ There's occasionally a problem with TensorFlow Hub that causes the following error:
 
 >Encoder tf-hub error:
 RuntimeError: Missing implementation that supports: loader(*('/var/folders/0w/pn889r517f9220q1vl66k7_h0000gn/T/tfhub_modules/1fb57c3ffe1a38479233ee9853ddd7a8ac8a8c47',), **{})
