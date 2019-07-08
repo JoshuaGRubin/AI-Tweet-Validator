@@ -7,6 +7,7 @@ June, 2019
 @author: Joshua Rubin
 """
 import os
+import csv
 import numpy as np
 import pandas as pd
 
@@ -50,6 +51,16 @@ for lab, (own, other) in zip(labels, dat):
     auc = roc_auc_score(truth, score)
 
     plt.plot(fpr,tpr, label=f'{auc:.2}:{lab}')
+
+    output_df = pd.DataFrame({ 'false_pos_rate'  : fpr,
+                               'true_pos_rate'  : tpr,
+                               'threshold' : thresh})
+
+    output_df.to_csv((os.path.join(output_directory,'rates_'+lab+'.txt'),
+                                  index=False,
+                                  float_format='%14.3f',
+                                  quoting=csv.QUOTE_NONE)
+
 
 plt.plot([0,1],[0,1],'k--')
 plt.xlabel('False Positive Rate', fontsize = 14)
