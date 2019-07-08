@@ -59,6 +59,10 @@ Run:
 > source <project_path>/twitter_creds.txt
 ```
 
+## Running the Project
+
+![Example project flow](DidIWriteThisDataFlow.png)
+
 ## Troubleshooting
 
 - There's a occationally a problem with TensorFlow Hub that casuses the following error:
