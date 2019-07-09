@@ -51,6 +51,15 @@ class NumpyEncoder(json.JSONEncoder):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
 
+def write_scores_to_json_file(output_directory, filename, scores):
+    out_file_path=os.path.join(output_directory, filename)                     
+    with open(out_file_path, 'w') as file:
+        json.dump(scores, file, cls=NumpyEncoder) 
+
+def safe_mkdir(dir):
+    if not os.path.isdir(dir):
+        os.makedirs(dir)
+
 def generate_similarity_scores(model, data_column,
                                file_prefix = '',
                                score_args = {},
@@ -83,6 +92,9 @@ def generate_similarity_scores(model, data_column,
     (2-tuple of arrays): Own and other similarity score arrays.
     """
 
+    output_directory = os.path.join(output_directory, file_prefix)
+    safe_mkdir(output_directory)
+
     train_data, test_data = load_tweets_from_directory(input_directory,
                                                        random_state = 1)  
     scores_own   = []
@@ -106,17 +118,20 @@ def generate_similarity_scores(model, data_column,
         my_scores     = model.similarity_score(my_test_tweets, **score_args)
         not_my_scores = model.similarity_score(other_test_tweets, **score_args)
              
+        # Write out user-specific similarity scores
+        user_out_dir = os.path.join(output_directory, user)
+        safe_mkdir(user_out_dir)
+        write_scores_to_json_file(user_out_dir,'own.json', my_scores)
+        write_scores_to_json_file(user_out_dir,'other.json', not_my_scores)
+
+        # Add user-specific scores to aggregate
         scores_own   = np.concatenate((scores_own,   my_scores))
-        scores_other = np.concatenate((scores_other, not_my_scores))            
+        scores_other = np.concatenate((scores_other, not_my_scores))   
+ 
        
     os.makedirs(output_directory, exist_ok=True)
 
-    out_file_path=os.path.join(output_directory, f'{file_prefix}_own.json')                     
-    with open(out_file_path, 'w') as file:
-        json.dump(scores_own, file, cls=NumpyEncoder) 
-    
-    out_file_path=os.path.join(output_directory, f'{file_prefix}_other.json') 
-    with open(out_file_path, 'w') as file:
-        json.dump(scores_other, file, cls=NumpyEncoder) 
+    write_scores_to_json_file(output_directory,'own.json', scores_own)
+    write_scores_to_json_file(output_directory,'other.json', scores_other)
 
-    return scores_own, scores_other    
+    return scores_own, scores_other
