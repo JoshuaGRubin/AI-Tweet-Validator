@@ -75,7 +75,7 @@ These scripts get their configuration details (data directories and settings) fr
 
 ![script project flow](DidIWriteThisDataFlow.png)
 
-The variables below are specified in `config.json`.  Run these scripts (e.g. `>python filter_raw_data.py`) in this order to reproduce 
+The variables below are specified in `config.json`.  Run these scripts (e.g. `>python filter_raw_data.py`) in this order to reproduce the project workflow.
 
 - **retrieve_users_from_twitter.py** (requires the optional Twitter configuration/credentials described above).  Downloads `max_tweets_per_user` tweets for the list of users in `twitter_users`.  It writes to `raw_data_path`.
 - **filter_raw_data.py** Reads tweets from `raw_data_path`, removes strings matching the regular expressions in `regexp_tweet_filters` (e.g. hashtags, user-references, URLs), and writes tweets with at least `min_tweet_characters` to `preprocessed_data_path`.
@@ -83,7 +83,7 @@ The variables below are specified in `config.json`.  Run these scripts (e.g. `>p
 - **generate_similarity_scores.py** reads data from `processed_data_path`; splits it into user-characterization and test sets; initializes a variety of models, both embedding-based and term-frequency-based; and uses those models to generate cosine similarity scores for the test data.  These results are written to `eval_output_path`.  *Ideally*, the selection of models and variations would be configurable in `config.json`, but that's a future to-do, and in the meantime, `generate_similarity_scores.py` can be copied and modified (it is an example, after all!).
 - **analyze_similarity_scores.py** reads similarity scores from `eval_output_path` and generates ROC/AUC graphs and data tables providing "sensitivity at false-positive-rate x" statements.  Results are written to `analysis_output_path`.
 
-## Test
+## Unit Tests
 To run a set of nontrivial unit-tests on the core tweetvalidator package, navigate to the tests directory and run pytest:
 
     > cd <project_path>/tests
