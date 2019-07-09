@@ -29,7 +29,6 @@ def load_tweets_from_directory(directory_path, split_frac = 0.4,
     frames = []
     for file in os.listdir(directory_path):
         if file[0] == '@':
-            print(file)
             newFrame = pd.read_json(os.path.join(directory_path,file))
             newFrame.columns = ['tweet','date','embedding']
             newFrame['name'] = file.split('.')[0]
@@ -104,7 +103,7 @@ def generate_similarity_scores(model, data_column,
         users = train_data['name'].unique()
 
     for user in users:
-        print(f'Evaluating model for {user}.')
+        print(f'\tEvaluating model for {user}.')
         
         user_train_dat  = train_data[train_data['name'] == user][data_column]
         other_train_dat = train_data[train_data['name'] != user][data_column]

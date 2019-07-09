@@ -79,10 +79,12 @@ class ClusteredCosSimModel(Model):
         self.cluster_scales = sim_sum/self.cluster_count
         
         if self.verbose:
+            print('\tCluster information:')
+            print(f'\t   N   Furthest  Typical  Cluster Mean[:3]')
             for count, edge, mean, scale in zip(
                    self.cluster_count, self.cluster_edges,
                    self.cluster_means, self.cluster_scales):
-                print(f'{count:5} {edge:5.2} {scale:5.2} {mean[:4]}')
+                print(f'\t{count:5} {edge:8.2} {scale:8.2} {mean[:3]}')
         
         self.characterization_complete = True
     
