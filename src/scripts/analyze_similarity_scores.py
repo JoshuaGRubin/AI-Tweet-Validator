@@ -34,35 +34,35 @@ def generate_analysis_output(out_dir, data, legend_string, title_label = ''):
     title_label (str): optional title to append to ROC at the top of the ROC
         plot. 
     """
-        plt.figure(figsize=[8,8])
-        for model, own, other in data:
-            truth = np.concatenate([np.ones(len(own)), np.zeros(len(other))])
-            score = np.concatenate([own, other])
+    plt.figure(figsize=[8,8])
+    for model, own, other in data:
+        truth = np.concatenate([np.ones(len(own)), np.zeros(len(other))])
+        score = np.concatenate([own, other])
 
-            fpr, tpr, thresh = roc_curve(truth, score)
-            
-            auc = roc_auc_score(truth, score)
+        fpr, tpr, thresh = roc_curve(truth, score)
+        
+        auc = roc_auc_score(truth, score)
 
-            plt.plot(fpr,tpr, label=f'{auc:.2}:{model}')
+        plt.plot(fpr,tpr, label=f'{auc:.2}:{model}')
 
-            output_df = pd.DataFrame({ 'false_pos_rate' : fpr,
-                                       'true_pos_rate'  : tpr,
-                                       'threshold'      : thresh})
-            # For each model, save out FPR, TPR, and threshold data
-            output_df.to_csv(os.path.join(out_dir,'rates_'+model+'.txt'),
-                                        index=False,
-                                        float_format='%14.3f',
-                                        quoting=csv.QUOTE_NONE)
+        output_df = pd.DataFrame({ 'false_pos_rate' : fpr,
+                                    'true_pos_rate'  : tpr,
+                                    'threshold'      : thresh})
+        # For each model, save out FPR, TPR, and threshold data
+        output_df.to_csv(os.path.join(out_dir,'rates_'+model+'.txt'),
+                                    index=False,
+                                    float_format='%14.3f',
+                                    quoting=csv.QUOTE_NONE)
 
-        plt.plot([0,1],[0,1],'k--')
-        plt.xlabel('False Positive Rate', fontsize = 14)
-        plt.ylabel('True Positive Rate', fontsize = 14)
-        legend = plt.legend(fontsize = 12, title=f'AUC:{legend_string}')
-        title = 'ROC' if not title_label else 'ROC - ' + title_label
-        plt.title(title, fontsize = 14)
-        plt.setp(legend.get_title(),fontsize='14')
-        plt.savefig(os.path.join(out_dir,'ROC_AUC_Comparison.png'))
-        plt.close()
+    plt.plot([0,1],[0,1],'k--')
+    plt.xlabel('False Positive Rate', fontsize = 14)
+    plt.ylabel('True Positive Rate', fontsize = 14)
+    legend = plt.legend(fontsize = 12, title=f'AUC:{legend_string}')
+    title = 'ROC' if not title_label else 'ROC - ' + title_label
+    plt.title(title, fontsize = 14)
+    plt.setp(legend.get_title(),fontsize='14')
+    plt.savefig(os.path.join(out_dir,'ROC_AUC_Comparison.png'))
+    plt.close()
 
 def generate_model_comparison_by_user(input_directory, output_directory):
     models = [x for x in os.listdir(input_directory) if '.' not in x]
