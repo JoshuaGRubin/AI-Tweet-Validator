@@ -7,7 +7,11 @@ Slides describing this project can be found here:  https://bit.ly/didIWriteThis
 
 ## Setup
 
-Clone this repo with `git clone https://github.com/JoshuaGRubin/AI-Tweet-Validator.git <project_path>` on your command line.
+Clone this repo with
+```bash
+git clone https://github.com/JoshuaGRubin/AI-Tweet-Validator.git <project_path>
+```
+ on your command line.
 
 *Optional*: while data from 13 Twitter users in included in the `data/raw` directory, if you'd like to be able to retrieve your own (e.g. more/other users, more recent tweets), you'll need to set up a Twitter developer account and app.  To do so, please visit https://developer.twitter.com, create an app, and have it approved. Once this is complete, you'll have access to API credentials. 
 
@@ -21,9 +25,9 @@ Clone this repo with `git clone https://github.com/JoshuaGRubin/AI-Tweet-Validat
 - To build and run your container, run the following in your command shell.
 
 ```
-> cd <project_path>
-> ./build_docker
-> ./run_docker
+cd <project_path>
+./build_docker
+./run_docker
 ```
 
 - At this point, you should be in a Docker shell at the root level of the project directory, mounted to `/app/` and shared with your host OS.  You should be able to `cd src/scripts` and `python <script_name>` to run any of the example scripts.  You also have the library, 'tweetvalidator' (from src/tweetvalidator) available in you `PYTHONPATH`, so you can include it in any of your own scripts.
@@ -35,28 +39,49 @@ While this setup has a few more steps and possibly plateform-dependent pitfalls,
 - Install a Python 3.x Anaconda environment from https://www.anaconda.com/distribution.
 - Run the following to create a new conda/Python environment:
 
-```
-> conda create --name <environment_name>
-> conda activate <environment_name>
-> conda install pip
+```bash
+conda create --name <environment_name> python=3.6.8
+conda activate <environment_name>
+conda install pip
 
 # Install project dependencies - includes `tweetvalidator`, the core module provided by this project.
-> cd <project_path>/build
-> pip install -r requirements.txt
+cd <project_path>/build
+pip install -r requirements.txt
 ```
 
 
-- If you're going to be using the Twitter API, edit build/insightTwitterCreds.bat and add your credentials.
+- If you're going to be using the Twitter API, edit `<project_path>/build/insightTwitterCreds.bat` and add your credentials.
 Run:
-```
-> source twitter_creds.txt
+```bash
+source twitter_creds.txt
 ```
 
 - Please keep in mind that you'll have to `conda activate <environment_name>` every time a shell launches.  If you plan on spending a lot of time working with this package, consider adding the following lines the end of your `~/.bash_profile`:
 
+```bash
+conda activate <environment_name>
+source <project_path>/twitter_creds.txt
 ```
-> conda activate <environment_name>
-> source <project_path>/twitter_creds.txt
+
+### Setup with Python virtual environment – *ultralight*
+
+This is quite similar to the 
+
+```bash
+cd <project_path>
+python -m venv <environment_name>
+source <environment_name>/bin/activate
+pip install --upgrade pip
+cd build
+pip install -r requirements.txt 
+```
+Similar to the Anaconda installation, and you'll have to run `source <project_path>/<environment_name>/bin/activate` each time you start a new shell (or add it to your `~/.bash_profile`).
+
+Also, as with the Anaconda installation, to use your own Twitter credentials, edit `<project_path>/build/insightTwitterCreds.bat` and add your credentials.
+
+Run:
+```bash
+source twitter_creds.txt
 ```
 
 ## Running the Project
@@ -84,14 +109,15 @@ The variables below are specified in `config.json`.  Run these scripts (e.g. `>p
 - **analyze_similarity_scores.py** reads similarity scores from `eval_output_path` and generates ROC/AUC graphs and data tables providing "sensitivity at false-positive-rate x" statements.  Results are written to `analysis_output_path`.
 
 ## Unit Tests
-To run a set of nontrivial unit-tests on the core tweetvalidator package, navigate to the tests directory and run pytest:
-
-    > cd <project_path>/tests
-    > pytest
+To run a limited set of nontrivial unit-tests on the core tweetvalidator package, navigate to the tests directory and run pytest:
+```bash
+cd <project_path>/tests
+pytest
+```
+If they are successful, pytest should report no errors (though some package-related warnings may appear).
 
 ## Troubleshooting
-
-There's occasionally a problem with TensorFlow Hub that causes the following error:
+Finally, there's occasionally a problem with TensorFlow Hub that causes the following error:
 
 >Encoder tf-hub error:
 RuntimeError: Missing implementation that supports: loader(*('/var/folders/0w/pn889r517f9220q1vl66k7_h0000gn/T/tfhub_modules/1fb57c3ffe1a38479233ee9853ddd7a8ac8a8c47',), **{})
