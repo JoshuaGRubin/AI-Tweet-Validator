@@ -1,5 +1,5 @@
 language: python
 install:
-  - pip install --user -r build/requirements.txt
+  - pip install -r build/requirements.txt
 script:
   - pytest
