@@ -1,5 +1,7 @@
 language: python
+services:
+  - docker
 install:
-  - pip install -r build/requirements.txt
+  - pip install -r requirements.travis.txt
 script:
   - pytest
