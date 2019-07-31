@@ -1,6 +1,4 @@
 language: python
-services:
-  - docker
 install:
   - pip install -r requirements.travis.txt
 script:
