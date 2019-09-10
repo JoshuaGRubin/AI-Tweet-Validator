@@ -65,7 +65,7 @@ source <project_path>/twitter_creds.txt
 
 ### Setup with Python virtual environment – *ultralight*
 
-This is quite similar to the 
+This is quite similar to the Anaconda setup above.
 
 ```bash
 cd <project_path>
