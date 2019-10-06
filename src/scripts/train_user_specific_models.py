@@ -14,8 +14,9 @@ create_dir_if_not_there(config['eval_output_path'])
 from tweetvalidator.models import RandomForestModel
 from tweetvalidator import train_models
 
-dir_args = {'input_directory'  : config['processed_data_path'],
-            'output_directory' : config['eval_output_path']}
+dir_args = {   'input_directory'  : config['processed_data_path'],
+       'negative_input_directory' : config['processed_negative_data_path'],
+               'output_directory' : config['eval_output_path']}
 
 train_models(RandomForestModel(verbose=True),
             'embedding', **dir_args,

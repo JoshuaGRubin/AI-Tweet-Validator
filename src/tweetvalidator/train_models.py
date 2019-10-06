@@ -85,7 +85,12 @@ def train_models(model, data_column,
     safe_mkdir(output_directory)
 
     train_data, test_data = load_tweets_from_directory(input_directory,
-                                                       random_state = 1)  
+                                                    random_state = 1)  
+
+    if negative_input_directory:
+        neg_train_data, neg_test_data = load_tweets_from_directory(
+                                                    negative_input_directory,
+                                                    random_state = 1)  
 
     if users is None:
         users = train_data['name'].unique()
@@ -94,14 +99,30 @@ def train_models(model, data_column,
         print(f'\tEvaluating model for {user}.')
         
         user_train_dat  = train_data[train_data['name'] == user][data_column]
-        other_train_dat = train_data[train_data['name'] != user][data_column]
+
+        user_test_dat  = test_data[test_data['name'] == user][data_column]
+
+        if negative_input_directory:
+            print("Here")
+            print(negative_input_directory)
+            other_train_dat = neg_train_data[neg_train_data['name'] != user][
+                                                                data_column]
+            
+            other_test_dat = neg_test_data[neg_test_data['name'] != user][
+                                                                data_column]
+
+        else:
+            other_train_dat = train_data[train_data['name'] != user][
+                                                                data_column]
+            
+            other_test_dat = test_data[test_data['name'] != user][data_column]
+
+        other_test_dat = other_test_dat[:len(user_test_dat)]
 
         # Initialize model for this user
         model.characterize(user_train_dat, other_train_dat)
       
-        user_test_dat  = test_data[test_data['name'] == user][data_column]
-        other_test_dat = test_data[test_data['name'] != user][data_column]
-        other_test_dat = other_test_dat[:len(user_test_dat)]
+
 
         user_test_pred = model.infer(user_test_dat)
         user_test_truth = np.ones(len(user_test_dat))

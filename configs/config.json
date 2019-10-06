@@ -2,6 +2,7 @@
   "max_tweets_per_user" : 1000,
   "raw_data_path":"../data/raw",
   "preprocessed_data_path":"../data/preprocessed",
+  "processed_negative_data_path":"../data/negative_processed",
   "processed_data_path":"../data/processed",
   "eval_output_path":"../data/model_eval",
   "analysis_output_path":"../data/analysis",
