@@ -5,7 +5,7 @@ pytest==4.4.0
 pandas==0.24.2
 scikit-learn==0.21.2
 spherecluster==0.1.7
-tensorflow==1.13.1
+tensorflow==2.6.4
 tensorflow-hub==0.4.0
 tweepy==3.7.0
 -e src
